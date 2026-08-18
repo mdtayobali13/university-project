@@ -24,6 +24,11 @@ class VendorService:
         await self.db.refresh(vendor)
         return vendor
 
+    async def get_all_vendors(self):
+        query = select(Vendor)
+        result = await self.db.execute(query)
+        return result.scalars().all()
+
     async def get_vendor_by_id(self, vendor_id: UUID) -> Vendor:
         query = select(Vendor).where(Vendor.id == vendor_id)
         result = await self.db.execute(query)
