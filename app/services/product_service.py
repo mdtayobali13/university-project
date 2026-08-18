@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.models.product import Product, ProductVariation
-from app.schemas.product import ProductCreate
+from app.schemas.product import ProductCreate, ProductUpdate
 from fastapi import HTTPException
 from uuid import UUID
 
@@ -36,3 +36,18 @@ class ProductService:
         if not product:
             raise HTTPException(status_code=404, detail="Product not found")
         return product
+
+    async def update_product(self, product_id: UUID, product_in: ProductUpdate) -> Product:
+        product = await self.get_product(product_id)
+        update_data = product_in.model_dump(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(product, field, value)
+        await self.db.commit()
+        await self.db.refresh(product)
+        return product
+
+    async def delete_product(self, product_id: UUID):
+        product = await self.get_product(product_id)
+        await self.db.delete(product)
+        await self.db.commit()
+        return True

@@ -1,4 +1,5 @@
-from pydantic import BaseModel ,Optional
+from pydantic import BaseModel
+from typing import Optional
 from uuid import UUID
 from datetime import datetime
 from app.schemas.product import ProductResponse

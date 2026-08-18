@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.models.vendor import Vendor
-from app.schemas.vendor import VendorCreate
+from app.schemas.vendor import VendorCreate, VendorUpdate
 from fastapi import HTTPException
 from uuid import UUID
 
@@ -31,3 +31,18 @@ class VendorService:
         if not vendor:
             raise HTTPException(status_code=404, detail="Vendor not found")
         return vendor
+
+    async def update_vendor(self, vendor_id: UUID, vendor_in: VendorUpdate) -> Vendor:
+        vendor = await self.get_vendor_by_id(vendor_id)
+        update_data = vendor_in.model_dump(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(vendor, field, value)
+        await self.db.commit()
+        await self.db.refresh(vendor)
+        return vendor
+
+    async def delete_vendor(self, vendor_id: UUID):
+        vendor = await self.get_vendor_by_id(vendor_id)
+        await self.db.delete(vendor)
+        await self.db.commit()
+        return True

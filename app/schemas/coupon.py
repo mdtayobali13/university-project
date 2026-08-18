@@ -19,6 +19,19 @@ class CouponBase(BaseModel):
 class CouponCreate(CouponBase):
     pass
 
+class CouponUpdate(BaseModel):
+    code: Optional[str] = None
+    discount_type: Optional[str] = None
+    discount_value: Optional[float] = None
+    min_order_amount: Optional[float] = None
+    max_discount_amount: Optional[float] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    usage_limit: Optional[int] = None
+    per_user_limit: Optional[int] = None
+    vendor_id: Optional[UUID] = None
+    is_active: Optional[bool] = None
+
 class CouponResponse(CouponBase):
     id: UUID
     usage_count: int

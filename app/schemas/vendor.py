@@ -18,6 +18,18 @@ class VendorBase(BaseModel):
 class VendorCreate(VendorBase):
     pass
 
+class VendorUpdate(BaseModel):
+    store_name: Optional[str] = None
+    owner_name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    business_info: Optional[Dict[str, Any]] = None
+    bank_info: Optional[Dict[str, Any]] = None
+    store_logo: Optional[str] = None
+    store_banner: Optional[str] = None
+
+
 class VendorResponse(VendorBase):
     id: UUID
     user_id: UUID

@@ -44,3 +44,37 @@ class CartService:
             
         await self.db.commit()
         return await self.get_cart(user_id)
+
+    async def update_item(self, user_id: UUID, item_id: UUID, item_in: CartItemUpdate) -> Cart:
+        cart = await self.get_cart(user_id)
+        
+        query = select(CartItem).where(
+            CartItem.id == item_id,
+            CartItem.cart_id == cart.id
+        )
+        result = await self.db.execute(query)
+        item = result.scalar_one_or_none()
+        
+        if not item:
+            raise HTTPException(status_code=404, detail="Item not found in cart")
+            
+        item.quantity = item_in.quantity
+        await self.db.commit()
+        return await self.get_cart(user_id)
+
+    async def remove_item(self, user_id: UUID, item_id: UUID):
+        cart = await self.get_cart(user_id)
+        
+        query = select(CartItem).where(
+            CartItem.id == item_id,
+            CartItem.cart_id == cart.id
+        )
+        result = await self.db.execute(query)
+        item = result.scalar_one_or_none()
+        
+        if not item:
+            raise HTTPException(status_code=404, detail="Item not found in cart")
+            
+        await self.db.delete(item)
+        await self.db.commit()
+        return await self.get_cart(user_id)

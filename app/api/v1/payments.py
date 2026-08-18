@@ -6,6 +6,8 @@ from app.schemas.payment import PaymentResponse
 from app.schemas.common import StandardResponse
 from app.services.payment_service import PaymentService
 from pydantic import BaseModel
+from app.api.deps import get_current_active_user
+from app.models.user import User
 
 router = APIRouter()
 
@@ -16,11 +18,11 @@ class PaymentInitiateRequest(BaseModel):
 @router.post("/initiate")
 async def initiate_payment(
     request: PaymentInitiateRequest,
-    user_id: UUID, # Assume from auth dependency
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     payment_service = PaymentService(db)
-    result = await payment_service.initiate_payment(user_id, request.order_id, request.gateway)
+    result = await payment_service.initiate_payment(current_user.id, request.order_id, request.gateway)
     return StandardResponse(success=True, message="Payment initiated", data=result)
 
 @router.post("/webhook/{gateway}")
@@ -33,3 +35,4 @@ async def handle_webhook(
     payment_service = PaymentService(db)
     await payment_service.handle_webhook(gateway, payload)
     return {"status": "success"}
+

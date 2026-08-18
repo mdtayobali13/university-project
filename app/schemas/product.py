@@ -41,6 +41,23 @@ class ProductBase(BaseModel):
 class ProductCreate(ProductBase):
     variations: Optional[List[ProductVariationCreate]] = None
 
+class ProductUpdate(BaseModel):
+    name: Optional[str] = None
+    slug: Optional[str] = None
+    sku: Optional[str] = None
+    description: Optional[str] = None
+    short_description: Optional[str] = None
+    price: Optional[float] = Field(None, gt=0)
+    discount_price: Optional[float] = None
+    cost_price: Optional[float] = None
+    stock_quantity: Optional[int] = None
+    low_stock_threshold: Optional[int] = None
+    category_id: Optional[UUID] = None
+    brand_id: Optional[UUID] = None
+    images: Optional[List[str]] = None
+    tags: Optional[List[str]] = None
+    is_featured: Optional[bool] = None
+
 class ProductResponse(ProductBase):
     id: UUID
     vendor_id: UUID

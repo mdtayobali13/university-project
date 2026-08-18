@@ -14,6 +14,14 @@ class CategoryBase(BaseModel):
 class CategoryCreate(CategoryBase):
     pass
 
+class CategoryUpdate(BaseModel):
+    name: Optional[str] = None
+    slug: Optional[str] = None
+    description: Optional[str] = None
+    image: Optional[str] = None
+    is_active: Optional[bool] = None
+    parent_id: Optional[UUID] = None
+
 class CategoryResponse(CategoryBase):
     id: UUID
     created_at: datetime
