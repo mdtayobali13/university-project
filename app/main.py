@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+import app.models 
 from app.core.config import settings
 from app.api.v1 import api_router
 from app.middleware.rate_limit import RateLimitMiddleware
@@ -6,6 +8,14 @@ from app.middleware.rate_limit import RateLimitMiddleware
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.add_middleware(RateLimitMiddleware, max_requests=100, window=60)

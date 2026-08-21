@@ -12,6 +12,7 @@ from app.api.v1.payments import router as payments_router
 from app.api.v1.payouts import router as payouts_router
 from app.api.v1.engagement import router as engagement_router
 from app.api.v1.admin import router as admin_router
+from app.api.v1.images import router as images_router
 
 api_router = APIRouter()
 api_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
@@ -27,3 +28,4 @@ api_router.include_router(payments_router, prefix="/payments", tags=["Payments"]
 api_router.include_router(payouts_router, prefix="/payouts", tags=["Payouts"])
 api_router.include_router(engagement_router, prefix="/engagement", tags=["Engagement"])
 api_router.include_router(admin_router, prefix="/admin", tags=["Admin"])
+api_router.include_router(images_router, prefix="/images", tags=["Images"])

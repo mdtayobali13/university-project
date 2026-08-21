@@ -1,11 +1,10 @@
-from sqlalchemy import String
-from ctypes import cast
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from uuid import UUID
 
 from app.core.config import settings
 from app.core.database import get_db
@@ -31,10 +30,6 @@ async def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    # In auth_service, we encoded user.id as string into 'sub'
-    result = await db.execute(select(User).where(cast(User.id, String) == token_data.sub)) # Wait, UUID comparison might fail. Let's just use the string if it parses, or let sqlalchemy handle UUID casting.
-    # Better:
-    from uuid import UUID
     try:
         user_id = UUID(token_data.sub)
     except ValueError:

@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.models.user import User
 from app.schemas.user import UserCreate
-from app.core.security import get_password_hash, verify_password, create_access_token
+from app.core.security import get_password_hash, verify_password, create_access_token, create_refresh_token
 from fastapi import HTTPException
 
 class AuthService:
@@ -34,4 +34,9 @@ class AuthService:
         if not user or not verify_password(password, user.hashed_password):
             return None
             
-        return create_access_token(subject=user.id)
+        access_token = create_access_token(subject=user.id)
+        refresh_token = create_refresh_token(subject=user.id)
+        return {
+            "access_token": access_token,
+            "refresh_token": refresh_token
+        }

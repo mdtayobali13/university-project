@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
 from app.models.product import Product, ProductVariation
 from app.schemas.product import ProductCreate, ProductUpdate
 from fastapi import HTTPException
@@ -30,12 +31,22 @@ class ProductService:
         return product
 
     async def get_product(self, product_id: UUID) -> Product:
-        query = select(Product).where(Product.id == product_id)
+        query = select(Product).where(Product.id == product_id).options(selectinload(Product.variations))
         result = await self.db.execute(query)
         product = result.scalar_one_or_none()
         if not product:
             raise HTTPException(status_code=404, detail="Product not found")
         return product
+
+    async def get_products(self, category_id: UUID = None, vendor_id: UUID = None, limit: int = 100, offset: int = 0):
+        query = select(Product).options(selectinload(Product.variations))
+        if category_id:
+            query = query.where(Product.category_id == category_id)
+        if vendor_id:
+            query = query.where(Product.vendor_id == vendor_id)
+        query = query.limit(limit).offset(offset)
+        result = await self.db.execute(query)
+        return result.scalars().all()
 
     async def update_product(self, product_id: UUID, product_in: ProductUpdate) -> Product:
         product = await self.get_product(product_id)

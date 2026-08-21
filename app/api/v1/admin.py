@@ -6,7 +6,16 @@ from app.schemas.admin import DashboardAnalyticsResponse, ProductApprovalRequest
 from app.schemas.common import StandardResponse
 from app.services.admin_service import AdminService
 
+from typing import List
+from app.schemas.user import UserResponse
+
 router = APIRouter()
+
+@router.get("/users", response_model=StandardResponse[List[UserResponse]])
+async def get_users(db: AsyncSession = Depends(get_db)):
+    admin_service = AdminService(db)
+    users = await admin_service.get_all_users()
+    return StandardResponse(success=True, message="Users retrieved successfully", data=users)
 
 @router.get("/analytics", response_model=StandardResponse[DashboardAnalyticsResponse])
 async def get_analytics(db: AsyncSession = Depends(get_db)):

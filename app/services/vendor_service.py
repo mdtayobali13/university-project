@@ -37,6 +37,11 @@ class VendorService:
             raise HTTPException(status_code=404, detail="Vendor not found")
         return vendor
 
+    async def get_vendor_by_user_id(self, user_id: UUID) -> Vendor:
+        query = select(Vendor).where(Vendor.user_id == user_id)
+        result = await self.db.execute(query)
+        return result.scalar_one_or_none()
+
     async def update_vendor(self, vendor_id: UUID, vendor_in: VendorUpdate) -> Vendor:
         vendor = await self.get_vendor_by_id(vendor_id)
         update_data = vendor_in.model_dump(exclude_unset=True)

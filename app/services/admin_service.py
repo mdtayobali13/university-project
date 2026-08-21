@@ -13,6 +13,11 @@ class AdminService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
+    async def get_all_users(self):
+        query = select(User)
+        result = await self.db.execute(query)
+        return result.scalars().all()
+
     async def get_dashboard_analytics(self):
         # Users
         users_count = await self.db.execute(select(func.count(User.id)))

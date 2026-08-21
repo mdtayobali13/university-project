@@ -7,7 +7,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://user:password@db:5432/ecommerce
+      - DATABASE_URL=postgresql+asyncpg://postgres:123456@db:5432/multivendor_ecommerce
       - REDIS_URL=redis://redis:6379/0
       - JWT_SECRET_KEY=change_this_in_production
     depends_on:
@@ -19,9 +19,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=ecommerce
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=multivendor_ecommerce
     ports:
       - "5432:5432"
 

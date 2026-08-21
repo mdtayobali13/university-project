@@ -10,6 +10,8 @@ from app.models.user import User
 
 router = APIRouter()
 
+from typing import List, Optional
+
 @router.post("/", response_model=StandardResponse[ProductResponse])
 async def create_product(
     product_in: ProductCreate,
@@ -20,6 +22,18 @@ async def create_product(
     product_service = ProductService(db)
     product = await product_service.create_product(vendor_id, product_in)
     return StandardResponse(success=True, message="Product created successfully", data=product)
+
+@router.get("/", response_model=StandardResponse[List[ProductResponse]])
+async def get_products(
+    category_id: Optional[UUID] = None,
+    vendor_id: Optional[UUID] = None,
+    limit: int = 100,
+    offset: int = 0,
+    db: AsyncSession = Depends(get_db)
+):
+    product_service = ProductService(db)
+    products = await product_service.get_products(category_id=category_id, vendor_id=vendor_id, limit=limit, offset=offset)
+    return StandardResponse(success=True, message="Products retrieved successfully", data=products)
 
 @router.get("/{product_id}", response_model=StandardResponse[ProductResponse])
 async def get_product(product_id: UUID, db: AsyncSession = Depends(get_db)):

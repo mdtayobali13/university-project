@@ -18,6 +18,17 @@ async def get_all_vendors(db: AsyncSession = Depends(get_db)):
     return StandardResponse(success=True, message="Vendors retrieved successfully", data=vendors)
 
 
+@router.get("/me", response_model=StandardResponse[VendorResponse])
+async def get_my_vendor_profile(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    vendor_service = VendorService(db)
+    vendor = await vendor_service.get_vendor_by_user_id(current_user.id)
+    if not vendor:
+        raise HTTPException(status_code=404, detail="Vendor profile not found")
+    return StandardResponse(success=True, message="Vendor retrieved successfully", data=vendor)
+
 @router.post("/", response_model=StandardResponse[VendorResponse])
 async def create_vendor(
     vendor_in: VendorCreate,
